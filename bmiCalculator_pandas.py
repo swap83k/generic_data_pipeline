@@ -6,27 +6,6 @@ import pandas as pd
 import doctest
 import psutil
 
-
-json_name = 'PatientData.json'
-
-df_iter = pd.read_json(json_name)
-
-df_iter["BMI"] = (df_iter.WeightKg.div(df_iter.HeightCm.div(100).pow(2)))
-
-df_iter["BMI_Category"]  = df_iter.apply(lambda x: get_analysis_from_BMI(x.BMI)[0],axis=1)
-
-df_iter["Health risk"]  = df_iter.apply(lambda x: get_analysis_from_BMI(x.BMI)[1],axis=1)
-
-print(df_iter)
-
-print('Validated number of people with Overweight: ' + str(df_iter.query('BMI_Category == "Overweight"').shape[0]))
-
-doctest.testmod()
-
-print('RAM usage is {} MB'.format(int(int(psutil.virtual_memory().total - psutil.virtual_memory().available)/ 1024 / 1024)))
-
-print('RAM usage is {} %'.format(psutil.virtual_memory().percent))
-
 def get_analysis_from_BMI(bmi):
     """Return the analysis from bmi.
 
@@ -48,5 +27,26 @@ def get_analysis_from_BMI(bmi):
         return('Severely obese','High risk')
     elif bmi >=40:
         return('Very severely obese','Very high risk')
+
+json_name = 'PatientData.json'
+
+df_iter = pd.read_json(json_name)
+
+df_iter["BMI"] = (df_iter.WeightKg.div(df_iter.HeightCm.div(100).pow(2)))
+
+df_iter["BMI_Category"]  = df_iter.apply(lambda x: get_analysis_from_BMI(x.BMI)[0],axis=1)
+
+df_iter["Health risk"]  = df_iter.apply(lambda x: get_analysis_from_BMI(x.BMI)[1],axis=1)
+
+print(df_iter)
+
+print('Validated number of people with Overweight: ' + str(df_iter.query('BMI_Category == "Overweight"').shape[0]))
+
+doctest.testmod()
+
+print('RAM usage is {} MB'.format(int(int(psutil.virtual_memory().total - psutil.virtual_memory().available)/ 1024 / 1024)))
+
+print('RAM usage is {} %'.format(psutil.virtual_memory().percent))
+
 
 
