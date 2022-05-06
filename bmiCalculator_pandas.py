@@ -44,7 +44,7 @@ def analyse_using_df():
 
     #print(df_iter)
 
-    output_file = open('G:\Git repos\generic_data_pipeline\PatientResultsDf.json', 'w', encoding='utf-8')
+    output_file = open('PatientResultsDf.json', 'w', encoding='utf-8')
 
     df_iter.to_json(output_file,orient='records')
         
@@ -61,9 +61,9 @@ def ijson_processor():
     #for prefix, event, value in ijson.parse(open(json_name)):
         #print('prefix={}, event={}, value={}'.format(prefix, event, value))
 
-    output_file = open('G:\Git repos\generic_data_pipeline\PatientResultsIjson.json', 'w', encoding='utf-8')
+    output_file = open('PatientResultsIjson.json', 'w', encoding='utf-8')
 
-    with open('G:\Git repos\generic_data_pipeline\PatientData.json','r') as f:
+    with open('PatientData.json','r') as f:
        objects = ijson.items(f, 'item')
        #print(objects)   
        columns = list(objects)
@@ -84,6 +84,6 @@ def ijson_processor():
     print('RAM usage1 is {} %'.format(psutil.virtual_memory().percent))
 
 if __name__ == '__main__':
-    json_name = 'G:\Git repos\generic_data_pipeline\PatientData.json'
+    json_name = 'PatientData.json'
     analyse_using_df()
     ijson_processor()
