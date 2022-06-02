@@ -1,0 +1,23 @@
+services:
+  gdpdatabase:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=gdp_db_user
+      - POSTGRES_PASSWORD=gdp1234
+      - POSTGRES_DB=gdp_db
+    volumes:
+      - "./gdp_postgres_data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5431:5432"   
+  gdpadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=pgadmin
+    ports:
+      - "8081:81"
+      
+      
+     
+
+
