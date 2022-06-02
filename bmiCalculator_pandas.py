@@ -5,10 +5,12 @@ import os
 import pandas as pd
 import doctest
 import psutil
+import ijson
+import json
 
-json_name = 'PatientData.json'
+#json_name = 'PatientData.json'
 
-def get_analysis_from_BMI(bmi):
+def get_analysis_from_BMI(bmi):    
     """Return the analysis from bmi.
 
     >>> get_analysis_from_BMI(20)
@@ -30,7 +32,7 @@ def get_analysis_from_BMI(bmi):
     elif bmi >=40:
         return('Very severely obese','Very high risk')
         
-def analyse_using_df():
+def analyse_using_df():   
     
     df_iter = pd.read_json(json_name)
     
@@ -40,9 +42,13 @@ def analyse_using_df():
 
     df_iter["Health risk"]  = df_iter.apply(lambda x: get_analysis_from_BMI(x.BMI)[1],axis=1)
 
-    print(df_iter)
+    #print(df_iter)
 
-    print('Validated number of people with Overweight: ' + str(df_iter.query('BMI_Category == "Overweight"').shape[0]))
+    output_file = open('PatientResultsDf.json', 'w', encoding='utf-8')
+
+    df_iter.to_json(output_file,orient='records')
+        
+    #print('Validated number of people with Overweight: ' + str(df_iter.query('BMI_Category == "Overweight"').shape[0]))
 
     doctest.testmod()
 
@@ -50,4 +56,34 @@ def analyse_using_df():
 
     print('RAM usage is {} %'.format(psutil.virtual_memory().percent))
 
-analyse_using_df()
+def ijson_processor():  
+
+    #for prefix, event, value in ijson.parse(open(json_name)):
+        #print('prefix={}, event={}, value={}'.format(prefix, event, value))
+
+    output_file = open('PatientResultsIjson.json', 'w', encoding='utf-8')
+
+    with open('PatientData.json','r') as f:
+       objects = ijson.items(f, 'item')
+       #print(objects)   
+       columns = list(objects)
+       #print(columns)
+       for idx in range(len(columns)):
+           #print(idx)
+           columns[idx]['BMI'] = (columns[idx]['WeightKg']/(columns[idx]['HeightCm']/100)**2)
+           columns[idx]["BMI_Category"]  = get_analysis_from_BMI(columns[idx]['BMI'])[0]
+           columns[idx]["Health risk"] = get_analysis_from_BMI(columns[idx]['BMI'])[1] 
+                      
+            
+    #print(columns)
+
+    json.dump(columns, output_file)    
+    
+    print('RAM usage1 is {} MB'.format(int(int(psutil.virtual_memory().total - psutil.virtual_memory().available)/ 1024 / 1024)))
+
+    print('RAM usage1 is {} %'.format(psutil.virtual_memory().percent))
+
+if __name__ == '__main__':
+    json_name = 'PatientData.json'
+    analyse_using_df()
+    ijson_processor()
